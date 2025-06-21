@@ -1,123 +1,190 @@
-# Finance App Refactoring Summary
+# Finance App - Project Structure & Database Overview
 
-## What Was Accomplished
+## Directory & File Overview
 
-Successfully refactored the monolithic `app.py` file (678 lines) into a clean, modular architecture with proper separation of concerns.
+### Root Directory
 
-## Original Structure
-- Single `app.py` file with 678 lines
-- All routes, models, and utilities mixed together
-- Difficult to maintain and extend
+- **app.py**  
+  Main Flask application entry point. Initializes the app, configures blueprints, and sets up the database and session.
 
-## New Structure
+- **requirements.txt**  
+  Lists all Python dependencies required to run the project.
 
-### 📁 **config/** - Configuration Management
-- `database.py` - Database initialization and session configuration
-- Centralized configuration for better maintainability
+- **test_refactored.py**  
+  Script for testing utility functions and basic app features.
 
-### 📁 **models/** - Data Models (3 files)
-- `user.py` - User authentication and management
-- `portfolio.py` - Portfolio and transaction management  
-- `watchlist.py` - Watchlist and price alert functionality
+- **README.md / README_REFACTORED.md**  
+  Project documentation and structure overview.
 
-### 📁 **routes/** - Route Handlers (4 files)
-- `auth.py` - Authentication routes (login, register, logout, change password)
-- `portfolio.py` - Portfolio routes (index, buy, sell, history)
-- `quote.py` - Stock quote lookup
-- `features.py` - Watchlist, alerts, and notes functionality
+- **finance.db**  
+  SQLite database file storing all user, portfolio, transaction, and feature data.
 
-### 📁 **utils/** - Utility Functions (2 files)
-- `helpers.py` - Common utilities (apology, login_required, usd)
-- `stock_utils.py` - Stock-related functions (lookup, sectors, popular stocks)
+- **database_schema.txt**  
+  Text file describing the database schema and table structure.
 
-### 📄 **app_new.py** - New Main Application (48 lines)
-- Clean, minimal main file
-- Proper initialization and configuration
-- Easy to understand and maintain
+- **video.mp4**  
+  Demo or instructional video for the project.
 
-## Key Improvements
+---
 
-### ✅ **Modularity**
-- Separated concerns into logical modules
-- Each file has a single responsibility
-- Easy to locate and modify specific functionality
+### `/config/`  
+**Purpose:** Application configuration and database/session setup.
 
-### ✅ **Maintainability**
-- Reduced complexity in individual files
-- Clear dependencies between modules
-- Better error isolation
+- **database.py**  
+  Handles database initialization, table creation (including watchlist, price alerts, transaction notes), and session configuration.
 
-### ✅ **Scalability**
-- Easy to add new features
-- Simple to extend existing functionality
-- Support for team development
+---
 
-### ✅ **Testability**
-- Each module can be tested independently
-- Clear interfaces between components
-- Better debugging capabilities
+### `/models/`  
+**Purpose:** Data models and business logic.
 
-### ✅ **Code Reusability**
-- Models can be reused across different routes
-- Utilities are shared across the application
-- Consistent patterns throughout
+- **user.py**  
+  User authentication, registration, password management, and cash balance logic.
 
-## Files Created
+- **portfolio.py**  
+  Portfolio management: holdings, transactions, buying/selling shares, and performance calculations.
 
-1. **config/database.py** - Database configuration
-2. **models/user.py** - User model
-3. **models/portfolio.py** - Portfolio model
-4. **models/watchlist.py** - Watchlist and alerts model
-5. **routes/auth.py** - Authentication routes
-6. **routes/portfolio.py** - Portfolio routes
-7. **routes/quote.py** - Quote routes
-8. **routes/features.py** - Feature routes
-9. **utils/helpers.py** - Helper utilities
-10. **utils/stock_utils.py** - Stock utilities
-11. **app_new.py** - New main application
-12. **test_refactored.py** - Test script
-13. **README_REFACTORED.md** - Documentation
+- **watchlist.py**  
+  Watchlist and price alert management for users.
 
-## Verification
+---
 
-✅ **All imports work correctly**
-✅ **Flask app creation successful**
-✅ **Utility functions tested and working**
-✅ **No functionality lost from original app**
-✅ **Maintains full compatibility**
+### `/routes/`  
+**Purpose:** Flask route handlers (controllers).
 
-## How to Use
+- **auth.py**  
+  Authentication routes: login, logout, register, change password.
 
-### Run the new application:
+- **portfolio.py**  
+  Portfolio routes: dashboard, buy, sell, transaction history.
+
+- **quote.py**  
+  Stock quote lookup route.
+
+- **features.py**  
+  Watchlist management, price alerts, and transaction notes.
+
+---
+
+### `/utils/`  
+**Purpose:** Utility and helper functions.
+
+- **helpers.py**  
+  Common utilities: error handling, login-required decorator, USD formatting.
+
+- **stock_utils.py**  
+  Stock-related utilities: symbol lookup, sector info, popular stocks, price change calculations.
+
+---
+
+### `/templates/`  
+**Purpose:** Jinja2 HTML templates for all web pages.
+
+- **layout.html**  
+  Base template for all pages.
+
+- **index.html**  
+  Main dashboard after login.
+
+- **buy.html, sell.html**  
+  Pages for buying and selling stocks.
+
+- **history.html**  
+  Transaction history page.
+
+- **login.html, register.html, change_password.html**  
+  Authentication and user management pages.
+
+- **quote.html, quoted.html**  
+  Stock quote lookup and result display.
+
+---
+
+### `/static/`  
+**Purpose:** Static assets (CSS, images, icons).
+
+- **css/**  
+  Custom stylesheets.
+
+- **src/**  
+  Source CSS for Tailwind or other preprocessors.
+
+- **favicon.ico, I_heart_validator.png**  
+  Icons and images.
+
+---
+
+### `/website_pages/`  
+**Purpose:** Screenshots of the website for documentation or demo purposes.
+
+---
+
+## Database Tables (`finance.db`)
+
+The following tables are used in the application:
+
+### 1. **users**
+- `id`: INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+- `username`: TEXT NOT NULL (UNIQUE)
+- `hash`: TEXT NOT NULL (password hash)
+- `cash`: NUMERIC NOT NULL DEFAULT 10000.00
+
+### 2. **transactions**
+- `user_id`: FOREIGN KEY REFERENCES users(id)
+- `symbol`: TEXT
+- `shares`: INTEGER (positive for buy, negative for sell)
+- `price`: NUMERIC
+- `timestamp`: DATETIME
+
+### 3. **portfolio**
+- `user_id`: INTEGER
+- `symbol`: TEXT
+- `shares`: INTEGER
+
+### 4. **watchlist**
+- `id`: INTEGER PRIMARY KEY AUTOINCREMENT
+- `user_id`: INTEGER NOT NULL
+- `symbol`: TEXT NOT NULL
+- `created_at`: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+### 5. **price_alerts**
+- `id`: INTEGER PRIMARY KEY AUTOINCREMENT
+- `user_id`: INTEGER NOT NULL
+- `symbol`: TEXT NOT NULL
+- `target_price`: NUMERIC NOT NULL
+- `alert_type`: TEXT NOT NULL
+- `created_at`: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+### 6. **transaction_notes**
+- `id`: INTEGER PRIMARY KEY AUTOINCREMENT
+- `transaction_id`: INTEGER NOT NULL
+- `note`: TEXT NOT NULL
+- `created_at`: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+**Indexes and Constraints:**
+- Unique index on `users.username`
+- Unique index on `(user_id, symbol)` in `portfolio`
+- Foreign key constraints for data integrity
+
+---
+
+## How to Run
+
 ```bash
-python app_new.py
+pip install -r requirements.txt
+flask run
 ```
 
-### Run the original (for comparison):
-```bash
-python app.py
-```
+---
 
-### Test the refactored structure:
-```bash
-python test_refactored.py
-```
+## Summary
 
-## Benefits Achieved
+This project is a modular, maintainable, and extensible finance web application.  
+- **Models** encapsulate business logic and database access.
+- **Routes** handle HTTP requests and responses.
+- **Templates** provide a modern, responsive UI.
+- **Database** is normalized and supports all core features (portfolio, watchlist, alerts, notes).
 
-1. **Reduced Complexity**: Large monolithic file broken into manageable pieces
-2. **Better Organization**: Related functionality grouped together
-3. **Easier Maintenance**: Clear structure makes updates straightforward
-4. **Improved Readability**: Each file has a focused purpose
-5. **Enhanced Debugging**: Issues can be isolated to specific modules
-6. **Future-Proof**: Easy to add new features without cluttering main file
+---
 
-## Migration Notes
-
-- Original `app.py` preserved for reference
-- All templates and static files unchanged
-- Database schema remains the same
-- Session management works identically
-- All routes maintain their original URLs and functionality
-
-The refactoring maintains 100% backward compatibility while providing a much cleaner, more maintainable codebase. 
+**This README provides a clear, up-to-date project overview for new developers.** 

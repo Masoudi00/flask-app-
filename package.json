@@ -1,0 +1,12 @@
+{
+  "name": "finance",
+  "version": "1.0.0",
+  "description": "CS50 Finance Project with Tailwind CSS",
+  "scripts": {
+    "build-css": "tailwindcss -i ./static/src/input.css -o ./static/css/main.css --watch"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.4.1",
+    "@tailwindcss/forms": "^0.5.7"
+  }
+} 

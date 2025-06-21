@@ -1,0 +1,35 @@
+<!-- quoted.html -->
+{% extends "layout.html" %}
+
+{% block title %}
+    Stock Quote
+{% endblock %}
+
+{% block main %}
+<div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div class="bg-white dark:bg-dark-primary shadow overflow-hidden sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6">
+                <h2 class="text-2xl leading-6 font-medium text-gray-900 dark:text-white">
+                    {{ stock['name'] }}
+                </h2>
+                <div class="mt-4 space-y-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Symbol</p>
+                        <p class="mt-1 text-lg text-gray-900 dark:text-white">{{ stock['symbol'] }}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Current Price</p>
+                        <p class="mt-1 text-lg text-gray-900 dark:text-white">{{ stock['price'] | usd }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="px-4 py-4 sm:px-6 bg-gray-50 dark:bg-gray-800">
+                <a href="/quote" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-finance-primary hover:bg-finance-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-finance-primary">
+                    Get another quote
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

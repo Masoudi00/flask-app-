@@ -1,0 +1,38 @@
+Database Schema for Finance Application
+
+1. users Table
+----------------
+- id: INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL
+- username: TEXT NOT NULL (UNIQUE)
+- hash: TEXT NOT NULL
+- cash: NUMERIC NOT NULL DEFAULT 10000.00
+
+2. transactions Table
+--------------------
+- user_id: FOREIGN KEY REFERENCES users(id)
+- symbol: TEXT
+- shares: INTEGER
+- price: NUMERIC
+- timestamp: DATETIME
+
+3. portfolio Table
+-----------------
+- user_id: INTEGER
+- symbol: TEXT
+- shares: INTEGER
+
+Indexes
+-------
+1. users table:
+   - UNIQUE INDEX on username
+
+2. portfolio table:
+   - UNIQUE INDEX idx_unique_user_symbol on (user_id, symbol)
+   - INDEX idx_user_portfolio on user_id
+
+Notes
+-----
+- Each user starts with $10,000 in cash
+- Portfolio table tracks current stock holdings
+- Transactions table maintains history of all buy/sell operations
+- Foreign key constraints ensure data integrity 
